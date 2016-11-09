@@ -175,7 +175,6 @@
 			isa = PBXGroup;
 			children = (
 				F1A883881DCC7E66009C09B4 /* Base.css */,
-				F1A883891DCC7E66009C09B4 /* Css */,
 				F1A8838B1DCC7E66009C09B4 /* gps.js */,
 				F1A8838C1DCC7E66009C09B4 /* index.html */,
 				F1A8838D1DCC7E66009C09B4 /* jquery-1.8.0.min.js */,
@@ -190,21 +189,6 @@
 				F1A883961DCC7E66009C09B4 /* tubiao_line.png */,
 			);
 			path = ditie;
-			sourceTree = "<group>";
-		};
-		F1A883891DCC7E66009C09B4 /* Css */ = {
-			isa = PBXGroup;
-			children = (
-				F1A8838A1DCC7E66009C09B4 /* Images */,
-			);
-			path = Css;
-			sourceTree = "<group>";
-		};
-		F1A8838A1DCC7E66009C09B4 /* Images */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Images;
 			sourceTree = "<group>";
 		};
 		F1A883A91DCC8BC4009C09B4 /* fsa */ = {
@@ -626,6 +610,7 @@
 				F1A883BE1DCC8BC4009C09B4 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

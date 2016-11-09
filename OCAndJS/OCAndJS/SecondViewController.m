@@ -12,7 +12,7 @@
 #define kScreenHeight [UIScreen mainScreen].bounds.size.height
 @interface SecondViewController ()<UIWebViewDelegate>
 @property(nonatomic,strong)UIWebView * webView;//
-@property(nonatomic,strong)WebViewJavascriptBridge * bridge;//
+@property(nonatomic,strong)WebViewJavascriptBridge * bridge;//桥接对象
 
 @end
 
@@ -24,25 +24,23 @@
     self.webView = [[UIWebView alloc] initWithFrame:CGRectMake(0, 20, kScreenWidth, kScreenHeight)];
     self.webView.delegate = self;
     [self.view addSubview:self.webView];
-    //js交互传值过去
-    [WebViewJavascriptBridge enableLogging];//开启日志
-    self.bridge = [WebViewJavascriptBridge bridgeForWebView:self.webView];//// 给哪个webview建立JS与OjbC的沟通桥梁
-    [_bridge setWebViewDelegate:self];
-    
-    //注册js的方法
-    [self.bridge registerHandler:@"testObjcCallback" handler:^(id data, WVJBResponseCallback responseCallback) {
-        //这里面获取在H5界面点击时，返回的值
-        //        NSLog(@"返回的数据：%@",data);
-        responseCallback(@"Response from testObjcCallback");//
-    }];
-    //OC给JS传值
-    [self.bridge callHandler:@"testJavascriptHandler" data:@{@"latitude":[NSNumber numberWithFloat:28.199439],@"lontitude":[NSNumber numberWithFloat:113.022366],@"cityName":@"长沙"}];
-    //加载页面
+    //加载H5页面
     NSString *resoucePath = [[NSBundle mainBundle] resourcePath];
     NSString * filePath = [resoucePath stringByAppendingPathComponent:@"index.html"];
     NSString * html = [[NSString alloc] initWithContentsOfFile:filePath encoding:NSUTF8StringEncoding error:nil];
     [self.webView loadHTMLString:html baseURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] bundlePath]]];
-    
+    //js与oc交互传值---打开方式WebViewJavascriptBridge
+    [WebViewJavascriptBridge enableLogging];//开启日志
+    self.bridge = [WebViewJavascriptBridge bridgeForWebView:self.webView];// 给哪个webview建立JS与OjbC的沟通桥梁
+    [_bridge setWebViewDelegate:self];//设置webView代理
+    //js与oc交互传值---OC给JS传值
+    [self.bridge callHandler:@"testJavascriptHandler" data:@{@"latitude":[NSNumber numberWithFloat:28.199439],@"lontitude":[NSNumber numberWithFloat:113.022366],@"cityName":@"长沙"}];
+    //js与oc交互传值---注册接收从js传传过来的值的理者，唯一标识是“ testObjcCallback”，与js中代码相对应
+    [self.bridge registerHandler:@"testObjcCallback" handler:^(id data, WVJBResponseCallback responseCallback) {
+        //这里面获取在H5界面返回的值，在data中
+        NSLog(@"%@",data);
+        responseCallback(@"Response from testObjcCallback");//block里面的值可以传到js中去，可以不写
+    }];
     //添加一个返回的按钮
     UIButton * button = [UIButton buttonWithType:(UIButtonTypeCustom)];\
     [button setFrame:CGRectMake(10, 30, 55, 44)];
