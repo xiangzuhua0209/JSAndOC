@@ -1,0 +1,245 @@
+@charset "UTF-8";
+body {
+  width: 100%;
+  margin: 0 auto;
+  background: #ebebf1;
+}
+/**页面加载**/
+#loadingWrap {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  background: #fff;
+  z-index: 999;
+}
+#loadingWrap img {
+  width: 100px;
+  height: 100px;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  margin: -50px 0 0 -50px;
+}
+#loadingWrap .load_bar {
+  width: 0;
+  height: 0.08rem;
+  background: #A5B001;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+.page_wrap {
+  height: 100%;
+  background: #ebebf1;
+}
+.page_wrap .btn_location {
+  width: 50px;
+  height: 50px;
+  background: #fff url(./tubiao_didian.png) no-repeat center center;
+  border-radius: 3px;
+  background-size: 70% 70%;
+  position: absolute;
+  left: 20px;
+  bottom: 20px;
+  z-index: 50;
+  -webkit-box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+  -moz-box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+  box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+}
+.page_wrap .btn_line {
+  width: 50px;
+  height: 50px;
+  background: #fff url(./tubiao_line.png) no-repeat center center;
+  border-radius: 3px;
+  background-size: 70% 70%;
+  position: absolute;
+  right: 20px;
+  bottom: 20px;
+  z-index: 50;
+  -webkit-box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+  -moz-box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+  box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+}
+#mysubway {
+  width: 100%;
+  height: 100%;
+}
+#mysubway.amap-subway-api .tip_route .route_btn_start {
+  float: left;
+  background: url(./tubiao_01.png) no-repeat left center;
+  background-size: 18px 18px;
+}
+#mysubway.amap-subway-api .tip_route .route_btn_end {
+  float: right;
+  background: url(./tubiao_02.png) no-repeat left center;
+  background-size: 18px 18px;
+}
+#mysubway.amap-subway-api .ust {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+#mysubway.amap-subway-api .tip_route .route_btn {
+  height: 40px;
+  line-height: 40px;
+  padding-left: 22px;
+  width: 50%;
+  webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+#mysubway.no_data {
+  background: #fff;
+}
+#mysubway .no_data_tips {
+  width: 100%;
+  text-align: center;
+  left: 0;
+  top: 50%;
+  position: absolute;
+  font-size: 0.28rem;
+  color: #666;
+  height: 2rem;
+  margin-top: -1rem;
+}
+#mysubway .no_data_tips img {
+  width: 2.02rem;
+  height: 1.42rem;
+  display: block;
+  margin: 0 auto;
+  margin-bottom: 0.2rem;
+  vertical-align: top;
+}
+/**线路选择**/
+#mask {
+  background: rgba(0, 0, 0, 0.5);
+  position: absolute;
+  right: 0;
+  top: 0;
+  left: 0;
+  z-index: 100;
+  width: 100%;
+  height: 100%;
+  display: none;
+}
+.select_scroll_box {
+  position: fixed;
+  right: 0;
+  bottom: -100%;
+  left: 0;
+  z-index: 200;
+  background-color: #fff;
+}
+.select_scroll_box .select_scroll_header {
+  background: #fbfbfd;
+  border-bottom: 1px solid #ececec;
+}
+.select_scroll_box .select_scroll_header h3 {
+  text-align: center;
+  font-weight: 700;
+  font-size: 0.28rem;
+  line-height: 0.88rem;
+}
+.select_scroll_box .select_scroll_header span {
+  padding: 0;
+  color: #3498db;
+  font-weight: 400;
+  font-size: 0.28rem;
+  line-height: 0.88rem;
+  width: 1.2rem;
+  text-align: center;
+}
+.select_scroll_box .select_scroll_group {
+  position: relative;
+  overflow: hidden;
+  height: 3.6rem;
+}
+.select_scroll_box .select_scroll_group .swiper-wrapper {
+  color: #ccc;
+  text-align: center;
+  line-height: 0.72rem;
+}
+.select_scroll_box .select_scroll_group .swiper-wrapper .swiper-slide {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  height: 0.72rem;
+  line-height: 0.72rem;
+  margin: 0;
+}
+.select_scroll_box .select_scroll_group .swiper-wrapper .swiper-slide.swiper-slide-active {
+  color: #333;
+}
+.select_scroll_box .select_scroll_select {
+  float: left;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  height: 100%;
+  background-color: #fff;
+  font-size: 0.32rem;
+}
+.select_scroll_box .select_scroll_select .swiper-container {
+  overflow: initial;
+}
+.select_scroll_box .select_scroll_select::after,
+.select_scroll_box .select_scroll_select::before {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  left: 0;
+  margin-top: -0.36rem;
+  height: 1px;
+  background-color: #ececec;
+  content: "";
+}
+.select_scroll_box .select_scroll_select::after {
+  margin-top: 0.36rem;
+}
+.select_scroll_box .select_mask {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0, #fff), color-stop(45%, rgba(255, 255, 255, 0)), color-stop(55%, rgba(255, 255, 255, 0)), color-stop(60%, rgba(255, 255, 255, 0)), color-stop(100%, #fff));
+  background: -webkit-linear-gradient(top, #fff 0, rgba(255, 255, 255, 0) 45%, rgba(255, 255, 255, 0) 55%, rgba(255, 255, 255, 0) 60%, #fff 100%);
+  background: -webkit-gradient(linear, left top, left bottom, from(#fff), color-stop(45%, rgba(255, 255, 255, 0)), color-stop(55%, rgba(255, 255, 255, 0)), color-stop(60%, rgba(255, 255, 255, 0)), to(white));
+  background: linear-gradient(to bottom, #fff 0, rgba(255, 255, 255, 0) 45%, rgba(255, 255, 255, 0) 55%, rgba(255, 255, 255, 0) 60%, #fff 100%);
+  pointer-events: none;
+  z-index: 10;
+}
+.select_scroll_box .fl {
+  float: left;
+}
+.select_scroll_box .fr {
+  float: right;
+}
+.amap-subway-api .tip_location {
+  position: absolute;
+  left: -30px;
+  bottom: 0;
+}
+.amap-subway-api .tip_location_bady {
+  width: 60px;
+  padding: 8px;
+  background: rgba(51, 51, 51, 0.8);
+  box-shadow: 0 0 6px 1px rgba(0, 0, 0, 0.3);
+  border-radius: 4px;
+  font-size: 12px;
+  color: #fff;
+  text-align: center;
+}
+.amap-subway-api .tip_location_footer {
+  height: 10px;
+  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABcAAAALCAYAAACUPhZAAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAG5JREFUeNpiNDY2FmNgYJgDxFIM1AOvgDidCcpIAeJn1DQYiB8zIQlQwwK4wSAOE5oEJRagGIxuOCUWYBiMzXByLMBqMC7DSbEAp8H4DCfGArwGEzIcnwUEDSbGcGwWEGUwsYYjW3CBWINBACDAACkeLdxbVjieAAAAAElFTkSuQmCC) no-repeat center top;
+  background-size: 21px 10px;
+}
+.amap-subway-api #select_bg {
+  width: 120%;
+}
+/*# sourceMappingURL=Mobile.css.map */

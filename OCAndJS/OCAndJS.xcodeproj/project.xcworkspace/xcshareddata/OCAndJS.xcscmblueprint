@@ -1,0 +1,24 @@
+{
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyRepositoryLocationsKey" : {
+    "d982db2c-3dd0-4401-8f8c-5e2b8efa468c++1033" : {
+
+    }
+  },
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyStatesKey" : {
+    "d982db2c-3dd0-4401-8f8c-5e2b8efa468c++1033" : 9223372036854775807
+  },
+  "DVTSourceControlWorkspaceBlueprintIdentifierKey" : "948981F3-8050-47F0-8C19-0CDD763B85B3",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyPathsKey" : {
+    "d982db2c-3dd0-4401-8f8c-5e2b8efa468c++1033" : "..\/..\/.."
+  },
+  "DVTSourceControlWorkspaceBlueprintNameKey" : "OCAndJS",
+  "DVTSourceControlWorkspaceBlueprintVersion" : 204,
+  "DVTSourceControlWorkspaceBlueprintRelativePathToProjectKey" : "OCAndJS.xcodeproj",
+  "DVTSourceControlWorkspaceBlueprintRemoteRepositoriesKey" : [
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "svn:\/\/172.1.1.199",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Subversion",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "d982db2c-3dd0-4401-8f8c-5e2b8efa468c++1033"
+    }
+  ]
+}

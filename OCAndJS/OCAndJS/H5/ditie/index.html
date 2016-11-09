@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, shrink-to-fit=no"/>
+    <meta content="yes" name="apple-touch-fullscreen"/>
+    <meta content="yes" name="apple-mobile-web-app-capable"/>
+    <meta content="black" name="apple-mobile-web-app-status-bar-style"/>
+    <meta content="telephone=no" name="format-detection"/>
+
+    <link rel="stylesheet" href="Base.css"/>
+    <link rel="stylesheet" href="Mobile.css"/>
+	<link rel="stylesheet" href="swiper.min.css">
+	
+    <script src="jquery-1.8.0.min.js"></script>
+    <script>
+    	function fontSizeInit(){
+	        var _w = $(window).width();
+	        var size = (_w / 640) * 100;
+	        if(size > 100){
+	            size = 100;
+	        }
+	        $('html').css('font-size', size+'px');
+	    }
+    	$(window).on('resize', function(){
+	        fontSizeInit();
+	    });
+	    fontSizeInit();
+    </script>
+
+    <title>地铁图</title>
+</head>
+
+<body>
+
+<div class="page_wrap">
+	<div id="loadingWrap"><span class="load_bar"></span></div>
+    <div id="test" style="display: none;"></div>
+    <div id="mysubway"></div>
+	<a href="javascript:void(0);" class="btn_location js_location_tap"></a>
+	<a href="javascript:void(0);" class="btn_line js_line_tap"></a>
+	
+	<!--线路选择-->
+    <div id="mask"></div>
+    <div id="selectWrap" class="select_scroll_box">
+        <div class="select_scroll_header clearfix">
+            <span class="fl js_select_close">取消</span>
+            <span class="fr js_select_sure">确定</span>
+            <h3></h3>
+        </div>
+        <div class="select_scroll_group">
+            <div class="select_scroll_select" style="width:100%;">
+                <div style="height:0.72rem;padding-top:1.44rem;">
+                    <div class="swiper-container swiper-container-item1" style="height:0.72rem;">
+                        <ul id="swiperSelectUl" class="swiper-wrapper">
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="select_mask"></div>
+        </div>
+    </div>
+</div>
+
+<script src="Juuz.js"></script>
+<script src="gps.js"></script>
+<script src="swiper.jquery.min.js"></script>
+
+<script>
+	var mysubway = null;					//地铁图对象
+	var zdId = '';							//最近地铁站点id
+    var bdLng = "";				            //百度坐标经度
+	var bdLat = "";					        //百度坐标纬度
+	var city = '';
+	var cityCodeArr = [];
+	var currentCityCode = '';
+    var lnglat = '';
+    var mapLoadOk = false;
+    var cityLoadOk = false;
+    
+    bindEvent();
+    
+    $('#loadingWrap .load_bar').animate({'width': '85%'}, 500);
+    
+    window.cbk2 = function(){
+        mapLoadOk = true;
+        if(cityLoadOk){ 
+            mapInit();
+        }
+    }
+    
+    window.cbk = function(){
+        cityLoadOk = true;
+        if(mapLoadOk){
+            mapInit();
+        }
+   	};
+
+    function mapInit(){
+        //创建地铁图
+        var test = subway("test");
+        
+        //把百度坐标转换高德坐标
+        lnglat = GPS.bd_decrypt(bdLat, bdLng);
+        lnglat = lnglat.lon + ',' + lnglat.lat;
+        
+        test.getCityList(function(data){
+            for (var i in data) {
+                cityCodeArr.push(i);
+            }
+            for(var j = 0; j < cityCodeArr.length; j++){
+                if(city == data[cityCodeArr[j]].name){
+                    currentCityCode = cityCodeArr[j];
+                    break;
+                }
+            }
+            if(currentCityCode == ''){
+                $('#loadingWrap .load_bar').stop(true, true).animate({'width': '100%'}, 200, function(){
+                    $('#mysubway').addClass('no_data').html('<p class="no_data_tips"><img src="no_data.png" />该城市暂无开通地铁，请重新选择城市</p>');
+                    $('.js_location_tap,.js_line_tap').hide();
+                    $('#loadingWrap').remove();
+                });
+                return false;
+            }
+
+            $('#test').remove();
+
+            mysubway = subway("mysubway", {
+                easy: 1,
+                adcode: currentCityCode
+            });
+
+            pageInit();
+        });
+    }
+
+    function pageInit(){
+   		//地图初始化后回调
+        mysubway.event.on("subway.complete", function(e){
+        	zdId = mysubway.getNearStation({
+				"lnglat": lnglat
+			});
+			
+			if(zdId && zdId != ''){
+				var strHtml = "";
+				strHtml += '<div class="tip_location">'
+				strHtml += '	<div class="tip_location_bady">离我最近</div>'
+				strHtml += '	<div class="tip_location_footer">'
+				strHtml += '	</div>'
+				strHtml += '</div>';
+				
+				mysubway.addMarker(zdId, {
+			        width: 19,
+			        height: 33,
+			        offset: {
+			            x: 0,
+			            y: 0
+			        },
+			        cnt: strHtml
+			    });
+			    
+			    //根据站点id获取站点中心点
+			    var zdCenter = mysubway.getStCenter(zdId);
+			    mysubway.setCenter(zdCenter);
+              }else{
+                alert('获取不到最近地铁站');
+              }
+			
+			//获取地铁线路图
+			mysubway.getLinelist(function(data){
+				var lineHtml = '';
+				for(var i = 0; i < data.length; i++){
+					lineHtml += '<li data-value="'+data[i].id+'" class="swiper-slide">'+data[i].name+'</li>';
+				}
+				$('#swiperSelectUl').html(lineHtml);
+				
+				lineSelectInit();
+			});
+			
+            $('#loadingWrap .load_bar').stop(true, true).animate({'width': '100%'}, 200, function(){
+                $('#loadingWrap').remove();
+            });
+        });
+        
+        //点击地铁图事件
+        mysubway.event.on("subway.touch", function(e){
+        	mysubway.clearMarker(zdId);
+        });
+        
+        //移动地铁图事件
+        mysubway.event.on("subway.move", function(e){
+        	mysubway.clearMarker(zdId);
+        });
+		
+		//点击站点事件
+		mysubway.event.on("station.touch", function(e, item){
+			mysubway.clearMarker(zdId);
+			
+			var strHtml = "";
+			strHtml += '<div class="tip_wrap">'
+			strHtml += '	<div class="tip_bady">'
+			strHtml += '		<div class="tip_name_detail">' 
+			strHtml += '			<span class="tip_name" id="tip_name">'+item.name+'</span>'
+			strHtml += '		</div>'
+			strHtml += '		<div class="tip_route">'
+			strHtml += '			<div class="route_btn route_btn_start ust js_start_tap" data-name="'+item.name+'">从这出发</div>'
+			strHtml += '			<div class="route_btn route_btn_end ust js_end_tap" data-name="'+item.name+'">到这里去</div>'
+			strHtml += '		</div>'
+			strHtml += '	</div>'
+			strHtml += '	<div class="tip_footer">'
+			strHtml += '	</div>'
+			strHtml += '</div>';
+			mysubway.addInfoWindow(item.name, {
+			    content: strHtml
+			});
+                          
+            bindEvent();
+		});
+		
+		//点击站点事件
+		mysubway.event.on("stationName.touch", function(e, item){
+			mysubway.clearMarker(zdId);
+			
+			var strHtml = "";
+			strHtml += '<div class="tip_wrap">'
+			strHtml += '	<div class="tip_bady">'
+			strHtml += '		<div class="tip_name_detail">' 
+			strHtml += '			<span class="tip_name" id="tip_name">'+item.name+'</span>'
+			strHtml += '		</div>'
+			strHtml += '		<div class="tip_route">'
+			strHtml += '			<div class="route_btn route_btn_start ust js_start_tap" data-name="'+item.name+'">从这出发</div>'
+			strHtml += '			<div class="route_btn route_btn_end ust js_end_tap" data-name="'+item.name+'">到这里去</div>'
+			strHtml += '		</div>'
+			strHtml += '	</div>'
+			strHtml += '	<div class="tip_footer">'
+			strHtml += '	</div>'
+			strHtml += '</div>';
+			mysubway.addInfoWindow(item.name, {
+			    content: strHtml
+			});
+            
+            bindEvent();
+		});
+		
+		//获取离我最近的地铁站
+	    $('.js_location_tap').off('click').on('click', function(){
+	    	if($('.tip_location').size() > 0){
+	    		return false;
+	    	}
+	    	if(zdId && zdId != ''){
+	    		mysubway.clearInfoWindow();
+	    	
+		    	var strHtml = "";
+				strHtml += '<div class="tip_location">'
+				strHtml += '	<div class="tip_location_bady">离我最近</div>'
+				strHtml += '	<div class="tip_location_footer">'
+				strHtml += '	</div>'
+				strHtml += '</div>';
+				
+				mysubway.addMarker(zdId, {
+			        width: 19,
+			        height: 33,
+			        offset: {
+			            x: 0,
+			            y: 0
+			        },
+			        cnt: strHtml
+			    });
+				    
+		    	//根据站点id获取站点中心点
+			    var zdCenter = mysubway.getStCenter(zdId);
+			    mysubway.setCenter(zdCenter);
+	    	}else{
+	    		alert("当前城市获取不到最近地铁站");
+	    	}
+	    });
+	    
+	    //选择线路
+	    $('.js_line_tap').off('click').on('click', function(){
+	    	$('#mask').fadeIn();
+            $('#selectWrap').animate({'bottom': 0});
+	    });
+   	}
+    
+    //选择线路初始化
+    function lineSelectInit(){
+    	/**生成滑动选择**/
+    	var swiper1 = null;
+        var opts = [];
+        $('.swiper-container').each(function(i){
+            var $this = $(this);
+            var index = $this.find('li.active').index() || 0;
+            opts.push(index);
+        });
+        var op1 = {
+            slidesPerView: 1,
+            freeMode: true,
+            freeModeSticky: true,
+            direction: 'vertical',
+            initialSlide: opts[0]
+        };
+        swiper1 = new Swiper('.swiper-container-item1', op1);
+        
+        /**取消事件**/
+        $('.js_select_close').off('click').on('click', function(){
+        	$('#mask').fadeOut();
+        	$('#selectWrap').animate({'bottom': '-100%'});
+        	
+        	return false;
+        });
+        
+        /**确认事件**/
+        $('.js_select_sure').off('click').on('click', function(){
+        	var $this = $(this);
+        	var optionLis = $('.swiper-container-item1').find('li');
+        	var _val = optionLis.eq(swiper1.activeIndex).data().value;
+        	
+        	$('#mask').fadeOut();
+        	$('#selectWrap').animate({'bottom': '-100%'});
+        	
+        	//显示指定线路 并获取中心点
+        	mysubway.showLine(_val);
+        	var lineCenter = mysubway.getSelectedLineCenter();
+        	mysubway.setCenter(lineCenter);
+        });
+    }
+
+    function setupWebViewJavascriptBridge(callback) {
+        if (window.WebViewJavascriptBridge) { return callback(WebViewJavascriptBridge); }
+        if (window.WVJBCallbacks) { return window.WVJBCallbacks.push(callback); }
+        window.WVJBCallbacks = [callback];
+        var WVJBIframe = document.createElement('iframe');
+        WVJBIframe.style.display = 'none';
+        WVJBIframe.src = 'wvjbscheme://__BRIDGE_LOADED__';
+        document.documentElement.appendChild(WVJBIframe);
+        setTimeout(function() { document.documentElement.removeChild(WVJBIframe) }, 0);
+    }
+
+    //绑定弹出框事件
+    function bindEvent(){
+        setupWebViewJavascriptBridge(function(bridge) {
+            bridge.registerHandler('testJavascriptHandler', function(data, responseCallback) {
+                city = data.cityName;
+                bdLng = data.lontitude;
+                bdLat = data.latitude;
+                                   
+                window.cbk();
+            });
+
+            $('.js_start_tap').off('touchstart').on('touchstart', function(event) {
+                var name = $(this).attr('data-name');
+                bridge.callHandler('testObjcCallback', {'name':name, 'type':'start'}, function(response) {});
+            });
+            $('.js_end_tap').off('.touchstart').on('touchstart', function(event) {
+                var name = $(this).attr('data-name');
+                bridge.callHandler('testObjcCallback', {'name':name,'type':'end'}, function(response) {});
+            });
+        });
+    }
+
+</script>
+
+<script src="http://webapi.amap.com/subway?v=1.0&key=42a96a06e9f5c0e13c16d45a43612424&callback=cbk2"></script>
+
+</body>
+</html>
